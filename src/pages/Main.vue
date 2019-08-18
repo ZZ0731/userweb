@@ -11,17 +11,14 @@
           <span v-else class="system-name">{{systemName}}</span>
         </el-header>
         <el-main>
-          <el-menu :collapse="collapsed">
-            <el-submenu index="1">
-              <template slot="title">
-                <i class="el-icon-menu"></i>
-                <span>菜单一</span>
-              </template>
-              <el-menu-item-group>
-                <el-menu-item index="1-1">选项1</el-menu-item>
-                <el-menu-item index="1-2">选项2</el-menu-item>
-              </el-menu-item-group>
+          <el-menu :default-active="$route.path" :collapse="collapsed">
+            <template v-for="(item,index) in menus">
+              <el-submenu :index="index+''" v-if="!item.leaf">
+                <template slot="title"><i :class="item.iconCls"></i><span v-if="!collapsed">{{item.name}}</span></template>
+            <el-menu-item v-for="child in item.children" :index="child.path" :key="child.path" @click="$router.push(child.path)">{{child.name}}</el-menu-item>
             </el-submenu>
+            <el-menu-item v-if="item.leaf&&item.children.length>0" :index="item.children[0].path"><i :class="item.iconCls"></i>{{item.children[0].name}}</el-menu-item>
+            </template>
           </el-menu>
         </el-main>
       </el-container>
@@ -56,17 +53,39 @@ let data = () => {
   return {
     collapsed: false,
     systemName: '后台管理',
-    userName: '系统管理员'
+    userName: '系统管理员',
+    menus: []
+  }
+}
+
+let initMenu = function() {
+  for (let i in this.$router.options.routes) {
+    let root = this.$router.options.routes[i]
+    if (root.hidden)
+      continue
+    let children = []
+    for (let j in root.children) {
+      let item = root.children[j]
+      if (item.hidden)
+        continue
+      children.push(item)
+    }
+
+    if (children.length < 1)
+      continue
+
+    this.menus.push(root)
+    root.children = children
   }
 }
 
 export default {
   data: data,
   methods: {
-
+    initMenu
   },
   mounted: function() {
-
+    this.initMenu()
   }
 }
 </script>
@@ -138,3 +157,4 @@ $header-height: 60px;
     }
 }
 </style>
+
