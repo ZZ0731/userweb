@@ -5,7 +5,7 @@
         <h1> {{msg}}</h1>
     </div>-->
     <el-form ref='AccountFrom' :model='account' :rules='rules' lable-position='left' lable-width='0px' class='demo-ruleForm login-container'>
-        <h3 class="title">登录系统首页</h3>
+        <h3 class="title">登录系统</h3>
         <el-form-item prop="username">
             <el-input type="text" v-model="account.username" auto-complete="off" placeholder="账号"></el-input>
         </el-form-item>
@@ -22,8 +22,7 @@
 </template>
 
 <script>
-    //引入api.js  好调用里面的接口
-    import {requestLogin} from '../api/api';
+   
     export default {
         name: 'login',
         data() {
@@ -56,26 +55,30 @@
                         //验证通过 可以提交
                         this.logining = true;
                         //将提交的数据进行封装
-                        var loginParams = {cUsername : this.account.username,cPwd:this.account.pwd};
+                        let postData = this.$qs.stringify({
+                             cUsername : this.account.username,
+                             cPwd:this.account.pwd
+                            });
+                        
                         
                         //调用函数  传递参数 获取结果
-                        requestLogin(loginParams).then(data=>{
+                        this.$axios.post('/api/login',postData).then(data=>{
                             
                             this.logining = false;
                             
-                            if(data.code == '200'){
+                            if(data.data.code == '200'){
                                 //登录成功
-                                sessionStorage.setItem('access-token',data.token);
+                                sessionStorage.setItem('access-token',data.data.token);
                                 //用vue路由跳转到后台主界面
-                                this.$router.push({path:'/home'});
+                                this.$router.push({path:'/main'});
                             }else{
                                 this.$message({
-                                    message:data.msg,
+                                    message:data.data.msg,
                                     type:'error'
                                 });
                             }
                         })
-                        
+                      
                     }else{
                         console.log('error submit');
                         return false;
@@ -89,6 +92,7 @@
 <style>
     body {
         background: #DFE9FB;
+        
     }
     
     .login-container {

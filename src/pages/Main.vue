@@ -34,7 +34,10 @@
               <i class="fa fa-align-justify"></i>
             </span>
           </el-col>
-          <el-col :span="6"><span class="el-dropdown-link userinfo-inner">你好：{{userName}}</span></el-col>
+          <el-col :span="6"><span class="el-dropdown-link userinfo-inner">你好：{{userName}}</span>
+          <a href="" style="color: #fff;" >退出</a>
+          </el-col>
+          
         </el-row>
       </el-header>
       <!--中间-->
@@ -53,7 +56,7 @@ let data = () => {
   return {
     collapsed: false,
     systemName: '后台管理',
-    userName: '系统管理员',
+    userName: sessionStorage.getItem("access-token"),
     menus: []
   }
 }

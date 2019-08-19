@@ -11,6 +11,12 @@ import router from './router'
  import ElementUI from 'element-ui'
  import './assets/theme/element-#DAC841/index.css'
  Vue.use(ElementUI)
+ //引入axios用于调用后台接口
+ import axios from 'axios'
+Vue.prototype.$axios = axios
+//传回后台的数据防止接收不到
+import qs from 'qs';
+Vue.prototype.$qs = qs;
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

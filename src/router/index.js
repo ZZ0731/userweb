@@ -5,6 +5,7 @@ Vue.use(Router)
  
 import Main from '@/pages/Main'
 import User from '@/pages/User'
+//import loginpage from '@/components/Login'
 const loginpage = resolve => require(['@/components/Login'],resolve)
  
 let router =new Router({
@@ -21,21 +22,16 @@ let router =new Router({
     },
     {
         path:'/main',
-        name :'main',
-        component:Main,
-        hidden: true,
-        children:[{
-         path:'/user',
-         name:'用户管理',
-         component:Main,
-         iconCls:'fa fa-user-circle-o',
-         children:[{
-           path:'/user/data',
-           component:User,
-           name:'用户信息管理'
+        name: '用户管理',
+        component: Main,
+        iconCls: 'fa fa-user-circle-o',
+        children: [{
+          path: '/main/data',
+          component: User,
+          name: '用户信息管理'
+        }]
        
-         }]
-         }]
+       
     }
 ]
 })
