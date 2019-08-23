@@ -5,6 +5,7 @@ Vue.use(Router)
  
 import Main from '@/pages/Main'
 import User from '@/pages/User'
+import addpage from '@/pages/add'
 //import loginpage from '@/components/Login'
 const loginpage = resolve => require(['@/components/Login'],resolve)
  
@@ -29,10 +30,15 @@ let router =new Router({
           path: '/main/data',
           component: User,
           name: '用户信息管理'
-        }]
-       
-       
-    }
+        }, 
+        {
+            path:'/main/add',
+            name :'add',
+            hidden:true,
+            component:addpage
+        }
+    ]},
+        
 ]
 })
 
