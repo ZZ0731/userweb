@@ -69,6 +69,7 @@
                             if(data.data.code == '200'){
                                 //登录成功
                                 sessionStorage.setItem('access-token',data.data.token);
+                                sessionStorage.setItem('userId',data.data.userid);
                                 //用vue路由跳转到后台主界面
                                 this.$router.push({path:'/main'});
                             }else{

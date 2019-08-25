@@ -11,11 +11,11 @@
   <el-form-item label="地址" prop="address">
     <el-input v-model="ruleForm.address" />
   </el-form-item>
-  <el-form-item label="密码" prop="pass" center="true">
-    <el-input type="password" v-model="ruleForm.pass" ></el-input>
+  <el-form-item label="密码"  prop="pass" center="true">
+    <el-input type="password"  v-model="ruleForm.pass" ></el-input>
   </el-form-item>
   <el-form-item label="确认密码" prop="checkPass" center="true">
-    <el-input type="password" v-model="ruleForm.checkPass" ></el-input>
+    <el-input type="password"   v-model="ruleForm.checkPass" ></el-input>
   </el-form-item>
   <el-form-item label="年龄" prop="age">
     <el-input v-model.number="ruleForm.age"></el-input>
@@ -27,7 +27,7 @@
         </el-radio-group>
       </el-form-item>
   <el-form-item>
-     <el-button @click="submitForm('ruleForm')">取消</el-button>
+     <el-button @click="cancel">取消</el-button>
     <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
     <el-button @click="resetForm('ruleForm')">重置</el-button>
   </el-form-item>
@@ -36,6 +36,7 @@
 </section>
 </template>
 <script>
+         
  export default {
     data() {
       var checkAge = (rule, value, callback) => {
@@ -57,7 +58,7 @@
       var validatePass = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请输入密码'));
-        } else {
+        } else {       
           if (this.ruleForm.checkPass !== '') {
             this.$refs.ruleForm.validateField('checkPass');
           }
@@ -74,6 +75,7 @@
         }
       };
       return {
+        path:"",
         params:{},
         ruleForm: {
           code:'',
@@ -82,7 +84,8 @@
           pass: '',
           checkPass: '',
           age: '',
-          sex:''
+          sex:'',
+          id:''
         },
         rules: {
            address: [{
@@ -101,9 +104,11 @@
                 trigger: 'blur'
                    }],
           pass: [
+              { min: 6, max: 12, message: '长度在6到12位字符', trigger: 'blur' },
             { validator: validatePass, trigger: 'blur' }
           ],
           checkPass: [
+             { min: 6, max: 12, message: '长度在6到12位字符', trigger: 'blur' },
             { validator: validatePass2, trigger: 'blur' }
           ],
           age: [
@@ -118,53 +123,75 @@
       };
     },
     methods: {
+          
       submitForm(formName) {       
         this.$refs[formName].validate(valid => {
-    if (!valid)
-      return
-
-    this.formLoading = true
-
-    //调用http协议
-    //将提交的数据进行封装
- this.params = this.$qs.stringify({
-          code: this.ruleForm.code,
-          name: this.ruleForm.name,
-          address: this.ruleForm.address,
-          pass:  this.ruleForm.pass,        
-          age: this.ruleForm.age,
-          sex:this.ruleForm.sex==='1' ?'男' :'女'
-    }); 
-  let _this=this;
-    this.$axios.post('/api/add', this.ruleForm).then(res => {
-     
-      if (!res.data.success) {
-        this.$message({
-          showClose: true,
-          message: res.data.message,
-          type: 'error'
-        });
+          if (!valid)
+          return
+          //调用http协议
+          //将提交的数据进行封装
+          this.params = this.$qs.stringify({
+            code: this.ruleForm.code,
+            name: this.ruleForm.name,
+            address: this.ruleForm.address,
+            pass:  this.ruleForm.pass,        
+            age: this.ruleForm.age,
+            sex:this.ruleForm.sex==='1' ?'男' :'女',
+            creator:sessionStorage.getItem("access-token"),
+            id:this.ruleForm.id           
+            }); 
+            let _this=this;
+            var url="/api/add";
+            if('/main/update'==this.$route.path){
+                url='/api/update'
+            }
+            this.$axios.post(url, this.params).then(res => {    
+            if ('500'==res.data.msgCode) {
+            this.$message({
+                  showClose: true,
+                  message: '保存失败！',
+                  type: 'error'
+                });
         return
-      }
-      this.$message({
+      }else{
+        this.$message({
         type: 'success',
         message: '保存成功!'
       })
-
-      //重新载入数据
-      this.page = 1
-      this.getRows()
-      this.formVisible = false
-    }).catch(e => '新增失败'+e)
-  })  
+       this.$router.push({ path:'/main/data'  })
+      }           
+      }).catch(e => this.$message({
+                  showClose: true,
+                  message: '保存失败！',
+                  type: 'error'
+                }))
+    })  
       },
       resetForm(formName) {
         this.$refs[formName].resetFields();
+      },
+      cancel(){
+       this.$router.push({ path:'/main/data'  })
       }
-    }
+    },
+    mounted: function() {
+  var path= this.$route.path;
+    if('/main/update'==path){
+     var json= this.$route.params
+     this.ruleForm.code=this.$route.params.code;
+     this.ruleForm.name=this.$route.params.name;
+     this.ruleForm.age=Number(this.$route.params.age);
+     this.ruleForm.address=this.$route.params.address;
+     this.ruleForm.pass=this.$route.params.password;
+     this.ruleForm.checkPass=this.$route.params.password;
+     this.ruleForm.id=this.$route.params.id;
+      if('男'==this.$route.params.sex){
+        this.ruleForm.sex=1
+      }else{
+        this.ruleForm.sex=2
+      }
+        }
   }
+ }
 </script>
 
-<style scoped>
-
-</style>

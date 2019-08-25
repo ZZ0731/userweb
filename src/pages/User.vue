@@ -14,7 +14,7 @@
       </el-form-item>
     </el-form>
   </el-col>
-  <el-table :data="rows" style="width: 100%" stripe border>
+  <el-table :data="rows" style="width: 100%" stripe border v-loading="pageLoading">
     <el-table-column label="注册日期" width="180">
       <template slot-scope="scope">
        <i class="el-icon-time"></i>
@@ -48,11 +48,11 @@
      </template>
     </el-table-column>
        <el-table-column label="地址" width="180">
-      <template slot-scope="scope">
-      
+      <template slot-scope="scope">  
        <span style="margin-left: 10px">{{ scope.row.address }}</span>
      </template>
     </el-table-column>
+     
     <el-table-column label="操作">
       <template slot-scope="scope">
        <el-button
@@ -78,78 +78,12 @@
       :total=total>
     </el-pagination>
   </el-col>
-<!--对话框-->
- <el-dialog :title="form && form.id ? '编辑' : '新增' " :visible.sync="formVisible" :close-on-click-modal="false">
-    <el-form :model="form" label-width="100px" :rules="rules" ref="form"  :visible.sync="formVisible">
-      <el-form-item label="密码" prop="pass">
-      <el-input type="password" v-model="form.pass" autocomplete="off"></el-input>
-      </el-form-item>
-      <el-form-item label="确认密码" prop="checkPass">
-            <el-input type="password" v-model="form.checkPass" auto-complete="off" placeholder="确认密码"></el-input>
-          </el-form-item>
-      <el-form-item label="姓名" prop="name">
-        <el-input v-model="form.name" />
-      </el-form-item>
-      <el-form-item label="性别" prop="sex">
-        <el-radio-group v-model="form.sex">
-          <el-radio :label="1">男</el-radio>
-          <el-radio :label="2">女</el-radio>
-        </el-radio-group>
-      </el-form-item>
-    </el-form>
-    <div slot="footer" class="dialog-footer">
-      <el-button @click.native="formVisible = false">取消</el-button>
-      <el-button @click="resetForm('form')">重置</el-button>
-      <el-button type="primary" @click.native="handleSubmit" :loading="formLoading">提交</el-button>
-    </div>
-  </el-dialog>
+
 </section>
 </template>
 
 <script>
-const rules = {
-    
-  pass: [{
-    required: true,
-    message: '请输入密码!',
-    trigger: 'blur'
-  },
-  { validator: (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请输入密码"))
-      } else {
-         if (this.form&&this.form.checkPass !== "") {
-           this.$ref.form.validateField("checkPass");
-         }
-        callback()
-      }
-    }, 
-  trigger: 'change' }
-  ],
-  checkPass: [{
-    required: true,
-    message: '请输入确认密码!',
-    trigger: 'blur'
-  },{ validator: (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请再次输入密码"));
-      } else if (value !== this.form.pass) {
-        callback(new Error("两次输入密码不一致!"));
-      } else {
-        callback();
-      }
-    }, trigger: 'change' }],
-  name: [{
-    required: true,
-    message: '请输入姓名',
-    trigger: 'blur'
-  }],
-  sex: [{
-    required: true,
-    message: '请选择性别',
-    trigger: 'change'
-  }]
-}
+
 let data = () => {
  
   return {
@@ -173,15 +107,8 @@ let data = () => {
     formLoading: false,
     //参数
     params:{},
-    //表单数据
-    form: {
-        pass: "",
-        checkPass: "",
-        name: "",
-        sex: "1"
-    },
-    //验证规则
-    rules: rules
+    
+   
 
   }
 }
@@ -189,50 +116,61 @@ let data = () => {
 let handleAdd = function() {
    this.$router.push({ path:'/main/add'  })
 }
-let handleSubmit= function() {
-       if (this.formLoading)
+//修改
+let handleEdit = function(index, row) {
+  this.$router.push({ 
+    path:'/main/update',
+    name:'update',
+    params:{
+        name:row.name,
+        code:row.code,
+        password:row.password,
+        age:row.age,
+        sex:row.sex,
+        password:row.password,
+        address:row.address,
+        id:row.id
+
+  }  })
+}
+
+//删除用户
+  let handleDelete = function(index, row) {
+    if (this.pageLoading)
     return
-
-  this.$refs.form.validate(valid => {
-    if (!valid)
-      return
-
-    this.formLoading = true
-
-    //调用http协议
-    this.$axios.post('/api/member/save', this.form).then(res => {
-      this.formLoading = false
-      if (!res.data.success) {
+    if(row.id==sessionStorage.getItem("userId")){
         this.$message({
-          showClose: true,
-          message: res.data.message,
-          type: 'error'
-        });
-        return
-      }
-      this.$message({
-        type: 'success',
-        message: '保存成功!'
+        type: 'error',
+        message: '此用户为登录用户不能删除!'
       })
-
-      //重新载入数据
+      return
+    }
+  this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(() => {
+    this.pageLoading = true
+    this.$axios.get('/api/delete?id=' + row.id).then(res => {
+      this.pageLoading = false
+      if ('500'==res.data.msgCode) {
+        this.$message({
+          type: 'error',
+          message: '删除失败'
+        })
+        return
+      }else if('200'==res.data.msgCode){
+          this.$message({
+          type: 'success',
+          message: '删除成功!'
+      })
+      }
       this.page = 1
       this.getRows()
-      this.formVisible = false
-    }).catch(e => this.formLoading = false)
-  })  
-      }
-      let resetForm= function(formName) {
-        this.$refs[formName].resetFields();
-      }
-let handleEdit = function(index, row) {
-  this.form = Object.assign({}, row)
-  this.formVisible = true
+    }).catch(e => this.pageLoading = false)
+  }).catch(e => {})
 }
 
-let handleDelete = function(index, row) {
-  console.log(index, row);
-}
 
 let getRows = function() {
 if (this.pageLoading)
@@ -292,15 +230,11 @@ export default {
 	//页数改变
     handleCurrentChange,
     //获取分页
-    getRows,
-    resetForm,
-    handleSubmit   
+    getRows  
+       
   },
   mounted: function() {
     this.getRows()
   }
 }
 </script>
-
-<style scoped>
-</style>

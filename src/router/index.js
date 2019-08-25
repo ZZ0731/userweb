@@ -36,6 +36,12 @@ let router =new Router({
             name :'add',
             hidden:true,
             component:addpage
+        }, 
+        {
+            path:'/main/update',
+            name :'update',
+            hidden:true,
+            component:addpage
         }
     ]},
         
