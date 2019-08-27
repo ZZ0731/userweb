@@ -151,7 +151,7 @@ let handleEdit = function(index, row) {
     type: 'warning'
   }).then(() => {
     this.pageLoading = true
-    this.$axios.get('/api/delete?id=' + row.id).then(res => {
+    this.$axios.get('/api/user/delete?id=' + row.id).then(res => {
       this.pageLoading = false
       if ('500'==res.data.msgCode) {
         this.$message({
@@ -184,7 +184,7 @@ if (this.pageLoading)
     });  
   //调用post请求
   let _this=this;
-  this.$axios.post('/api/queryUserPage', this.params).then(res=>{
+  this.$axios.post('/api/user/queryUserPage', this.params).then(res=>{
     _this.pageLoading = false
     if (!res.data || ! res.data.userPageData)
       return

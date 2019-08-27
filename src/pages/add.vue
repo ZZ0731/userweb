@@ -141,9 +141,9 @@
             id:this.ruleForm.id           
             }); 
             let _this=this;
-            var url="/api/add";
+            var url="/api/user/add";
             if('/main/update'==this.$route.path){
-                url='/api/update'
+                url='/api/user/update'
             }
             this.$axios.post(url, this.params).then(res => {    
             if ('500'==res.data.msgCode) {

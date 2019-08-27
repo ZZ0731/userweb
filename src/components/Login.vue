@@ -62,7 +62,7 @@
                         
                         
                         //调用函数  传递参数 获取结果
-                        this.$axios.post('/api/login',postData).then(data=>{
+                        this.$axios.post('/api/user/login',postData).then(data=>{
                             
                             this.logining = false;
                             
