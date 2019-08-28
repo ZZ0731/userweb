@@ -7,7 +7,7 @@
         <el-input v-model="filters.query" placeholder="姓名/账号/地址" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" v-on:click="getRows" icon="el-icon-search">查询</el-button>
+        <el-button type="primary" v-on:click="handleQuery" icon="el-icon-search">查询</el-button>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" v-on:click="handleAdd" icon="el-icon-plus">添加</el-button>
