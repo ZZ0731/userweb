@@ -186,6 +186,13 @@ if (this.pageLoading)
   let _this=this;
   this.$axios.post('/api/user/queryUserPage', this.params).then(res=>{
     _this.pageLoading = false
+     if ('500'==res.data.msgCode) {
+        this.$message({
+          type: 'error',
+          message: res.data.msg
+        })
+        return
+        }else if('200'==res.data.msgCode){
     if (!res.data || ! res.data.userPageData)
       return
     //总数赋值
@@ -193,6 +200,7 @@ if (this.pageLoading)
    // _this.page++;
     //页面元素赋值
     _this.rows = res.data.userPageData;
+  }
   }).catch(e => _this.pageLoading = false)
 }
 let handleQuery = function() {
