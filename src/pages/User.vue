@@ -107,9 +107,8 @@ let data = () => {
     formLoading: false,
     //参数
     params:{},
-    
-   
-
+    //查询参数
+    queryparam:''
   }
 }
 //添加
@@ -118,6 +117,15 @@ let handleAdd = function() {
 }
 //修改
 let handleEdit = function(index, row) {
+   if (this.pageLoading)
+    return
+  if(row.id==sessionStorage.getItem("userId")){
+        this.$message({
+        type: 'warning',
+        message: '此用户为登录用户不能修改!'
+      })
+      return
+    }
   this.$router.push({ 
     path:'/main/update',
     name:'update',
@@ -140,7 +148,7 @@ let handleEdit = function(index, row) {
     return
     if(row.id==sessionStorage.getItem("userId")){
         this.$message({
-        type: 'error',
+        type: 'warning',
         message: '此用户为登录用户不能删除!'
       })
       return
@@ -180,15 +188,17 @@ if (this.pageLoading)
  this.params = this.$qs.stringify({
   pageNum : this.page,
   pageSize : this.size,
-  queryParameter:this.filters.query?this.filters.query:""
+  queryParameter:this.queryparam?this.queryparam:""
     });  
   //调用post请求
   let _this=this;
   this.$axios.post('/api/user/queryUserPage', this.params).then(res=>{
     _this.pageLoading = false
      if ('500'==res.data.msgCode) {
+       _this.rows=[];
+       _this.pageLoading = false
         this.$message({
-          type: 'error',
+           showClose: true,
           message: res.data.msg
         })
         return
@@ -205,11 +215,13 @@ if (this.pageLoading)
 }
 let handleQuery = function() {
   this.page = 1
+  this.queryparam=this.filters.query
   this.getRows()
 }
               //每页显示数据量变更
 let  handleSizeChange=function(val) {
-		  this.size = val
+      this.size = val
+      this.page=1
 		  this.getRows()
 		  }
 		        
