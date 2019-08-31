@@ -1,26 +1,28 @@
 <template>
 <section>
-    
- <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm"   class="demo-ruleForm" >
-    <el-form-item label="账号" prop="code">
+  
+    <el-form ref="ruleForm" :model="ruleForm" label-width="80px" class="demo-ruleForm-inline add-container">
+       <h3 class="title">{{title}}</h3>
+ <!--<el-form :model="ruleForm"  :rules="rules" ref="ruleForm"  class="demo-ruleForm-inline add-container" >-->
+    <el-form-item label="账    号" prop="code">
     <el-input v-model="ruleForm.code" />
   </el-form-item>
-   <el-form-item label="姓名" prop="name">
+   <el-form-item  label="姓    名" prop="name">
     <el-input v-model="ruleForm.name" />
   </el-form-item>
-  <el-form-item label="地址" prop="address">
+  <el-form-item label="地    址" prop="address">
     <el-input v-model="ruleForm.address" />
   </el-form-item>
-  <el-form-item label="密码"  prop="pass" center="true">
+  <el-form-item label="密    码"  prop="pass" center="true">
     <el-input type="password"  v-model="ruleForm.pass" ></el-input>
   </el-form-item>
   <el-form-item label="确认密码" prop="checkPass" center="true">
     <el-input type="password"   v-model="ruleForm.checkPass" ></el-input>
   </el-form-item>
-  <el-form-item label="年龄" prop="age">
+  <el-form-item label="年    龄" prop="age">
     <el-input v-model.number="ruleForm.age"></el-input>
   </el-form-item>
-  <el-form-item label="性别" prop="sex">
+  <el-form-item label="性    别" prop="sex">
         <el-radio-group v-model="ruleForm.sex">
           <el-radio :label="1">男</el-radio>
           <el-radio :label="2">女</el-radio>
@@ -75,6 +77,7 @@
         }
       };
       return {
+        title:"新增用户",
         path:"",
         params:{},
         ruleForm: {
@@ -136,7 +139,7 @@
             address: this.ruleForm.address,
             pass:  this.ruleForm.pass,        
             age: this.ruleForm.age,
-            sex:this.ruleForm.sex==='1' ?'男' :'女',
+            sex:this.ruleForm.sex===1?'男' :'女',
             creator:sessionStorage.getItem("access-token"),
             id:this.ruleForm.id           
             }); 
@@ -177,6 +180,7 @@
     mounted: function() {
   var path= this.$route.path;
     if('/main/update'==path){
+      this.title='编辑用户';
      var json= this.$route.params
      this.ruleForm.code=this.$route.params.code;
      this.ruleForm.name=this.$route.params.name;
@@ -195,3 +199,9 @@
  }
 </script>
 
+<style>
+    .add-container {  
+        width: 350px;   
+        margin-left: 35%;
+    }
+</style>
