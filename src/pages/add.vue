@@ -1,9 +1,8 @@
 <template>
 <section>
   
-    <el-form ref="ruleForm" :model="ruleForm" label-width="80px" class="demo-ruleForm-inline add-container">
+    <el-form ref="ruleForm" :model="ruleForm" label-width="80px" :rules="rules" class="demo-ruleForm-inline add-container">
        <h3 class="title">{{title}}</h3>
- <!--<el-form :model="ruleForm"  :rules="rules" ref="ruleForm"  class="demo-ruleForm-inline add-container" >-->
     <el-form-item label="账    号" prop="code">
     <el-input v-model="ruleForm.code" />
   </el-form-item>
