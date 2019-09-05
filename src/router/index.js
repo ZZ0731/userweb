@@ -37,6 +37,7 @@ let router =new Router({
             hidden:true,
             component:addpage
         }, 
+       
         {
             path:'/main/update',
             name :'update',
@@ -53,7 +54,15 @@ let router =new Router({
         if(to.path.startsWith('/login')){
             window.sessionStorage.removeItem('access-token');
             next();
-        }else{
+        }else if(to.path.endsWith('/main/data')){
+            let token = window.sessionStorage.getItem('access-token'); 
+            if(!token||'register'==token)  {
+             //未登录  跳回主页面
+             next({path:'/login'});
+            }else{
+                next();
+            }
+        } else{
             let token = window.sessionStorage.getItem('access-token');
             if(!token){
                 //未登录  跳回主页面

@@ -10,7 +10,7 @@
           </span>
           <span v-else class="system-name">{{systemName}}</span>
         </el-header>
-        <el-main>
+        <el-main v-if="userName!='register'">
           <el-menu :default-active="$route.path" :collapse="collapsed">
             <template v-for="(item,index) in menus">
               <el-submenu :index="index+''" v-if="!item.leaf">
@@ -34,8 +34,8 @@
               <i class="fa fa-align-justify"></i>
             </span>
           </el-col>
-          <el-col :span="6"><span class="el-dropdown-link userinfo-inner">你好：{{userName}}</span>
-          <a href="" style="color: #fff;" >退出</a>
+          <el-col :span="6"><span class="el-dropdown-link userinfo-inner">你好{{userName=='register'?"":'：'+userName}}</span>
+          <a href="" style="color: #fff;" v-if="userName!='register'" >退出</a>
           </el-col>
           
         </el-row>

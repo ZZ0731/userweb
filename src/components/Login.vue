@@ -14,11 +14,13 @@
         </el-form-item>
          
         <el-form-item style="width:100%;">
-            <el-button type="primary" style="width:100%;" @click.native.prevent='handleLogin' :loading= 'logining'>登录</el-button>
+            <el-button type="primary" style="width:100%;" @click.native.prevent='handleLogin' :loading= 'logining'>登录</el-button>          
         </el-form-item>
-
+          <el-form-item style="width:100%;">
+            <el-button style="width:100%;" @click.native.prevent='register' :loading= 'logining'>注册</el-button>         
+        </el-form-item>
     </el-form>
-
+      
 </template>
 
 <script>
@@ -85,6 +87,11 @@
                         return false;
                     }
                 });
+            },
+            register(){
+                  sessionStorage.setItem('access-token','register'); 
+                //用vue路由跳转到后台主界面
+                this.$router.push({path:'/main/add'});
             }
         }
     }
